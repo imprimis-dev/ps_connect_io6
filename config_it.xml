@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>ps_connect_io6</name>
+    <displayName><![CDATA[ImporterONE Cloud Connector]]></displayName>
+    <version><![CDATA[1.0.9]]></version>
+    <description><![CDATA[Connette il tuo negozio con ImporterONE Cloud]]></description>
+    <author><![CDATA[Imprimis]]></author>
+    <tab><![CDATA[quick_bulk_update]]></tab>
+	<confirmUninstall><![CDATA[]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>
