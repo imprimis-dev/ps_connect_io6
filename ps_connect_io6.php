@@ -672,7 +672,7 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
 
                 if ($ps_product_id == 0) {
                     if ($fastSync) {
-                        throw new Exception("Prodotto non aggiornabile con procedura FAST perchè non esistente in Prestashop o non abbinato ad ImporterOne.");
+                        throw new Exception("Prodotto non aggiornabile con procedura FAST perchè non esistente in Prestashop o non abbinato ad ImporterONE.");
                         //$this->io6_write_log("Prodotto non aggiornabile con procedura FAST perchè non esistente in Prestashop o non associato ad ImporterOne.", IO6_LOG_INFO);
                         //continue;
                     }
@@ -684,16 +684,12 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
                     // }
 
                     if ($ps_product_id == 0 && !empty($io6product->$skuProp)) {
+												
+                        $sql = "SELECT id_product FROM " . _DB_PREFIX_ . "product p 
+																WHERE p.reference = '" . pSQL($io6product->$skuProp) . "'";
 
-                        $sql = "SELECT id_product FROM " . _DB_PREFIX_ . "product p";
-
-                        if ($skuProp == 'partNumber') {
-                            $sql .= " LEFT JOIN " . _DB_PREFIX_ . "manufacturer m ON m.id_manufacturer = p.id_manufacturer";
-                            $ps_brand = new Manufacturer($ps_brand_id);
-                            $sql .= " WHERE p.reference = '" . pSQL($io6product->$skuProp) . "' AND m.name = '" . pSQL(strtoupper($ps_brand->name)) . "'";
-                        } else {
-                            $sql .= " WHERE p.reference = '" . pSQL($io6product->$skuProp) . "'";
-                        }
+                        if ($skuProp == 'partNumber')
+														$sql .= " AND id_manufacturer = " . (int)$ps_brand_id;
 
                         $results = DB::getInstance()->getValue($sql);
                         if ($results !== false) {
@@ -702,16 +698,17 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
                     }
 
                     if ($ps_product_id == 0 && !empty($io6product->ean)) {
-                        $sql = "SELECT id_product FROM " . _DB_PREFIX_ . "product WHERE " . pSQL($eanField) . " = " . pSQL($io6product->ean);
+                        $sql = "SELECT id_product FROM " . _DB_PREFIX_ . "product WHERE " . pSQL($eanField) . " = '" . pSQL($io6product->ean) . "'";
                         $results = DB::getInstance()->getValue($sql);
                         if ($results !== false) {
                             $ps_product_id = (int)$results;
                         }
                     }
-
+										
+										
                     if (version_compare(_PS_VERSION_, '1.7.7', '>=')) {
                         if ($ps_product_id == 0 && !empty($io6product->partNumber)) {
-                            $sql = "SELECT id_product FROM " . _DB_PREFIX_ . "product WHERE " . pSQL($partNumberField) . " = " . pSQL($io6product->partNumber) . " AND id_manufacturer = " . (int)$ps_brand_id;
+                            $sql = "SELECT id_product FROM " . _DB_PREFIX_ . "product WHERE " . pSQL($partNumberField) . " = '" . pSQL($io6product->partNumber) . "' AND id_manufacturer = " . (int)$ps_brand_id;
                             $results = DB::getInstance()->getValue($sql);
                             if ($results !== false) {
                                 $ps_product_id = (int)$results;
