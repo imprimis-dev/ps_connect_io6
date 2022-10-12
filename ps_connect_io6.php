@@ -29,8 +29,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-//test
-
 define('IO6_LOG_INFO', 'INFO');
 define('IO6_LOG_WARNING', 'WARNING');
 define('IO6_LOG_ERROR', 'ERROR');
