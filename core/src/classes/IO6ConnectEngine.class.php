@@ -150,6 +150,42 @@ class IO6ConnectEngine {
 			return $priceLists;
 		}
 
+		public function TestAPI() {
+
+			$api_token = $this->configuration->apiToken;			
+			$endPoint = rtrim($this->configuration->apiEndPoint, '/');
+
+			$results = [];
+			try{
+				$retValue = $this->callIO6API('catalogs', 'GET', null, $endPoint, $api_token);
+				$results['response']['catalogs']['passed'] = $retValue === false ? false : true;
+				$results['response']['catalogs']['total'] = count($retValue);
+			} catch(Exception $e){
+				$results['response']['catalogs']['passed'] = false;
+			}
+			
+			try {
+		   	$parameters = [];
+			$parameters['pageSize'] = 5;
+			$parameters['currentPage'] = 1;
+			$parameters['imagelimit'] = 1;
+			$parameters['featuresSearch'] = 0;
+			$parameters['calculateFoundRows'] = true;			
+			$parameters['imagesSearch'] = 0;
+			$parameters['isActive'] = 1;
+			$parameters['isObsolete'] = 0;
+
+			$retValue = $this->callIO6API(sprintf('catalogs/%s/products/search', $this->configuration->catalogId), 'POST', $parameters, $endPoint, $api_token);
+			$results['response']['products']['passed'] = $retValue === false ? false : true;;
+			$results['response']['products']['total'] = $retValue['elementsFounds'];
+
+			} catch(Exception $e){
+				$results['response']['products']['passed'] = false;
+			}
+			
+			return $results;
+		}
+
 	
 		private function callIO6API($action, $method = 'POST', array $parameters = null) {
 			$api_token = $this->configuration->apiToken;			

@@ -99,6 +99,38 @@ $(document).ready(function () {
 		$("#io6-exec-cancel-sync").addClass("display-none");
 			      
     });    
+
+	$("#io6-test-api").unbind();
+	$("#io6-test-api").on('click', async function(e) {
+		e.preventDefault();
+		$cancel = false;
+		var href = e.target.href;
+		$(this).prop('disabled', true);
+
+			await $.ajax({
+				method: "get",
+				async: true,
+				dataType: 'json',
+				url: href,
+				
+				success: function (data) {
+
+					if(data.response.catalogs.passed && data.response.products.passed) {
+						$('#fieldset_0 .form-wrapper').append('<div class="module_confirmation conf confirm alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button>Connessione ImporterONE avvenuta correttamente.</div>');
+					}
+					else {
+						$('#fieldset_0 .form-wrapper').append('<div class="module_error alert alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>C\'è stato un problema di connessione con ImporterONE.<br/>Controllare i parametri immessi o contattare il supporto tecnico.</div>');
+					}
+				},
+				error: function (error) {
+					console.log("ERROR " + error.toString());		
+				},
+				complete: function() {
+				}
+			});
+    });    
+
+	
   });
 
 </script>

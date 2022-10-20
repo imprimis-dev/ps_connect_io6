@@ -208,7 +208,16 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
         return $configuration;
     }
 
+    public function io6TestApi(){
+        $io6_configuration = new IO6ConnectConfiguration($this->getIO6ConnectConfiguration());
+        $io6Engine = new IO6ConnectEngine($io6_configuration);
 
+        $results = $io6Engine->TestApi();
+
+        echo isset($results) ? json_encode($results) : '{}';
+
+        die();
+    }
 
     /**
      * 
@@ -1455,6 +1464,15 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
                     'title' => $this->l('API Settings'),
                     'icon' => 'icon-cogs',
                 ),
+                'buttons' => array(
+                    [
+                        'href' => $this->context->link->getBaseLink() . "module/ps_connect_io6/actions?action=IO6TestAPI",          // If this is set, the button will be an <a> tag
+                        'type' => 'button',         // Button type
+                        'id'   => 'io6-test-api',
+                        'name' => 'io6-test-api',       // If not defined, this will take the value of "submitOptions{$table}"
+                        'title' => 'Test Connessione ImporterONE',      // Button label
+                    ],
+                ),
                 'input' => array(
                     array(
                         'col' => 3,
@@ -1473,6 +1491,7 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
                         'label' => $this->l('API Token'),
                     ),
                 ),
+                
                 'submit' => array(
                     'title' => $this->l('Save'),
                 ),

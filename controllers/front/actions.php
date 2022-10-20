@@ -69,4 +69,16 @@ class Ps_Connect_Io6ActionsModuleFrontController extends ModuleFrontController
 
     }
 
+    public function displayAjaxIO6TestAPI()
+    {
+        $this->processIO6TestAPI();
+    }
+
+    public function processIO6TestAPI(){
+        try {
+                $this->module->io6TestApi();
+        } catch (Exception $e) {
+        }
+    }
+
 }
