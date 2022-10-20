@@ -641,7 +641,7 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
             $update_features = $io6_configuration->manageFeatures;
             $update_features_html = $io6_configuration->manageFeaturesHTML;
             $concat_features_html = $io6_configuration->concatFeaturesHTML; //TODO CT 20211016 Verificare, se non viene usato rimuovere anche da configuration
-            $excludeNoImage = $io6_configuration->excludeNoImage;
+            //$excludeNoImage = $io6_configuration->excludeNoImage;
             $update_tax_rule = $io6_configuration->manageTaxRule;
 
             $manage_facetedsearch_models = Configuration::get('IMPORTERONE6CONNECT_MANAGE_FACETEDSEARCH_MODELS') == 1 && !$fastSync;
@@ -818,14 +818,14 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
 
                 }
 
-                if ($excludeNoImage && count($io6product->images) == 0 && !$has_cms_images && !$fastSync) {
-                    $activeState = false;
-                    $this->io6_write_log("Prodotto escluso perchè senza immagini. IO6 Product Id: " . $io6product->id, IO6_LOG_INFO);
-                    throw new Exception("Prodotto escluso perchè senza immagini");
-                    // array_push($syncResults['products'], $retProduct);
-                    // //TODO CT 20210521 Non va bene fare la continue, andrebbe aggiornata almeno la tabella ps_importerone6connect_products con lo sync_status e sync_message
-                    // continue;
-                }
+                // if ($excludeNoImage && count($io6product->images) == 0 && !$has_cms_images && !$fastSync) {
+                //     $activeState = false;
+                //     $this->io6_write_log("Prodotto escluso perchè senza immagini. IO6 Product Id: " . $io6product->id, IO6_LOG_INFO);
+                //     throw new Exception("Prodotto escluso perchè senza immagini");
+                //     // array_push($syncResults['products'], $retProduct);
+                //     // //TODO CT 20210521 Non va bene fare la continue, andrebbe aggiornata almeno la tabella ps_importerone6connect_products con lo sync_status e sync_message
+                //     // continue;
+                // }
 
                 $ps_product->active = $activeState;
 
@@ -2060,10 +2060,10 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
                     ),
                     array(
                         'type' => 'switch',
-                        'label' => $this->l('Disattiva prodotti senza immagini'),
+                        'label' => $this->l('Escludi prodotti senza immagini'),
                         'name' => 'IMPORTERONE6CONNECT_EXCLUDE_NOIMAGE',
                         'is_bool' => true,
-                        'desc' => $this->l('Disattiva i prodotti senza immagini.'),
+                        'desc' => $this->l('ImporterONE non invierà prodotti senza immagini e quelli corrispondenti verranno disattivati.'),
                         'values' => array(
                             array(
                                 'id' => 'exclude_noimage_on',

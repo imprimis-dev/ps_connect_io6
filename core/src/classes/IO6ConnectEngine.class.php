@@ -113,7 +113,7 @@ class IO6ConnectEngine {
 			$parameters['calculateFoundRows'] = true;
 			$parameters['excludeAvailLessThan'] = $this->configuration->excludeAvailLessThan;
 			$parameters['excludeAvailType'] = $this->configuration->excludeAvailType;
-
+			$parameters['imagesSearch'] = $this->configuration->excludeNoImage ? 1 : 0;
 			$parameters['isActive'] = 1;
 			$parameters['isObsolete'] = 0;
 
