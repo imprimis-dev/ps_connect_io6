@@ -23,61 +23,47 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
-<div class="panel">
-    <h3><i class="icon icon-cogs"></i> {l s='Requisti Minimi' mod='importerone6connect'}</h3>
-    <p>{l s='Requisiti minimi per una corretta importazione' mod='importerone6connect'}</p>
+{* <div class="panel"> *}
+    <p>{l s='Requisti minimi non soddisfatti' mod='importerone6connect'}<p>
+    <p>{l s='Continuando con l\'esecuzione del plugin o del cron le procedure potrebbero non funzionare correttamente e si accetta di proseguire a proprio rischio.' mod='importerone6connect'}</p>
 
-    {*MAX_EXECUTION_TIME*}
-    <div class="form-group">
-        <br />
-        <label class="control-label col-lg-3">
-            {l s='MAX_EXECUTION_TIME' mod='importerone6connect'}
-        </label>
-        <div class="col-lg-9">
-            <span>{$serverRequirements.php_requirements.max_execution_time}</span>
-            {if $serverRequirements.max_execution_time}
-                <img src="../img/admin/enabled.gif" />
-            {else}
-                <img src="../img/admin/warning.gif" />
-            {/if}
-        </div>
-    </div>
-    {*MEMORY_LIMIT*}
-    <div class="form-group">
-        <br />
-        <label class="control-label col-lg-3">
-            {l s='MEMORY_LIMIT' mod='importerone6connect'}
-        </label>
-        <div class="col-lg-9">
-            <span>{$serverRequirements.php_requirements.memory_limit}</span>
-            {if $serverRequirements.memory_limit}
-                <img src="../img/admin/enabled.gif" />
-            {else}
-                <img src="../img/admin/warning.gif" />
-            {/if}
-        </div>
-    </div>
-    {*PS_VERSION*}
-    <div class="form-group">
-        <br />
-        <label class="control-label col-lg-3">
-            {l s='PS_VERSION' mod='importerone6connect'}
-        </label>
-        <div class="col-lg-9">
-            <span>{$serverRequirements.php_requirements.ps_version}</span>
-            {if $serverRequirements.ps_version}
-                <img src="../img/admin/enabled.gif" />
-            {else}
-                <img src="../img/admin/warning.gif" />
-            {/if}
-        </div>
-
-        {*REQUIREMENT MESSAGE*}
-        <div class="form-group">
-            {if !$serverRequirements.memory_limit || !$serverRequirements.max_execution_time || !$serverRequirements.ps_version}
-            <br />
-            <div class="" style="border: none;border-left: 3px solid #fcc94f;padding: 10px;margin-top: 10px;position: relative;background-color: #fff3d7;color: #d2a63c;">{l s='Requisiti minimi consigliati non soddisfatti, con questi parametri la procedura di sincro potrebbe non funzionare. Si consiglia di adeguare i parametri prima di procedere.' mod='importerone6connect'}</div>
-            {/if}
-        </div>
-    </div>
-</div>
+    <table class="server-requirements-table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>{l s="Richiesto" mod='importerone6connect'}</th>
+                <th>{l s="Attuale" mod='importerone6connect'}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {if !$serverRequirements.max_execution_time.passed}
+            <tr>
+                <td>{l s="MAX EXECUTION TIME" mod='importerone6connect'}</td>
+                <td>{$serverRequirements.max_execution_time.required}</td>
+                <td>{$serverRequirements.max_execution_time.current}</td>
+            </tr>
+        {/if}
+        {if !$serverRequirements.memory_limit.passed}
+            <tr>
+                <td>{l s="MEMORY LIMIT" mod='importerone6connect'}</td>
+                <td>{$serverRequirements.memory_limit.required}</td>
+                <td>{$serverRequirements.memory_limit.current}</td>
+            </tr>
+        {/if}
+        {if !$serverRequirements.php_version.passed}
+            <tr>
+                <td>{l s="PHP VERSION" mod='importerone6connect'}</td>
+                <td>{$serverRequirements.php_version.required}</td>
+                <td>{$serverRequirements.php_version.current}</td>
+            </tr>
+        {/if}
+        {if !$serverRequirements.ps_version.passed}
+            <tr>
+                <td>{l s="PS VERSION" mod='importerone6connect'}</td>
+                <td>{$serverRequirements.ps_version.required}</td>
+                <td>{$serverRequirements.ps_version.current}</td>
+            </tr>
+        {/if}
+        </tbody>
+    </table>
+{* </div> *}

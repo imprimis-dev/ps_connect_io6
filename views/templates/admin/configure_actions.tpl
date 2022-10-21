@@ -33,15 +33,6 @@ $(document).ready(function () {
 		$cancel = true;
 		$('#io6-exec-sync-info').html("Annullamento in corso...");
 	});
-
-	$("#io6-ignore-requirements").on('click', function() {
-		if($(this).is(':checked')){
-			$("#io6-exec-sync").prop('disabled', false);
-		} else {
-			$("#io6-exec-sync").prop('disabled', true);
-		}
-	});
-
 	
 	
 	$("#io6-exec-sync").unbind();
@@ -51,7 +42,6 @@ $(document).ready(function () {
 		$("#io6-exec-cancel-sync").removeClass("display-none");
 		var resumeSync = $("#io6-resume-sync").is(':checked') ? 1 : 0;
 		var fastSync = $("#io6-fast-sync").is(':checked') ? 1 : 0;
-		var ignoreRequirements = $("#io6-ignore-requirements").is(':checked') ? 1 : 0;
 	
 		var currentPage = 1;
 		var totalPages = 1;
@@ -70,7 +60,7 @@ $(document).ready(function () {
 				async: true,
 				dataType: 'json',
 				//url: window.location.protocol + '//' + window.location.hostname + '/wp-admin/admin-ajax.php?action=io6-sync&page=' + currentPage,
-				url: '{$executeUrl}&page=' + currentPage + '&fast=' + fastSync + '&resume=' + resumeSync + '&accettoAvvisoRequisiti=' + ignoreRequirements,
+				url: '{$executeUrl}&page=' + currentPage + '&fast=' + fastSync + '&resume=' + resumeSync,
 				
 				success: function (data) {
 					totalPages = data.pages;
@@ -156,37 +146,18 @@ $(document).ready(function () {
 			<small>({l s='Verranno aggiornati solamente prezzo e quantità dei prodotti esistenti, i prodotti nuovi verranno scartati' mod='importerone6connect'})</small>
 		</label>
 		<br/>
-		<button class="btn btn-default" id="io6-exec-sync" {if !$serverRequirements.memory_limit || !$serverRequirements.max_execution_time || !$serverRequirements.ps_version}disabled{/if}>
+		<button class="btn btn-default" id="io6-exec-sync">
 			{l s='Aggiorna catalogo da ImporterONE ...' mod='importerone6connect'}
 		</button>		
 		<button class="btn btn-cancel display-none" id="io6-exec-cancel-sync" >
 			{l s='Annulla' mod='importerone6connect'}
-		</button>
-		{if !$serverRequirements.memory_limit || !$serverRequirements.max_execution_time || !$serverRequirements.ps_version}
-			<label>
-				<input name="io6-ignore-requirements" type="checkbox" class="" id="io6-ignore-requirements" value="1"/>
-				{l s='Desidero avviare la procedura di sincro anche se il server non soddisfa i requisiti minimi e potrebbe non riuscire con esito corretto.' mod='importerone6connect'}
-			</label>
-		{/if}
-		
+		</button>		
 	</div>
 	<div class="wrap">
 		<div id="io6-exec-sync-info" class="sync-info"></div>
 		<div id="io6-exec-sync-status" class="sync-status"></div>	
 	</div>
 	<div class="form-group">
-		{if !$serverRequirements.memory_limit || !$serverRequirements.max_execution_time || !$serverRequirements.ps_version}
-		<br/>		
-		<strong>{l s="Comando CRON sincronizzazione normale. Requisiti minimi consigliati non soddisfatti" mod='importerone6connect'}</strong>
-		<div class="" style="border: none;border-left: 3px solid #fcc94f;padding: 10px;position: relative;background-color: #fff3d7;color: #d2a63c;">{$cronCommandWarning}</div>
-		<p class="help-block">{l s='Puoi configurare un CRON per l\'esecuzione del comando PHP con i parametri sopra indicati per eseguire l\'aggiornamento automatico del catalogo' mod='importerone6connect'}</p>
-		<p class="help-block">{l s="Se si desidera procedere ugualmente sarà necessarrio aggiungere '&accettoAvvisoRequisiti=1' alla stringa del cron" mod='importerone6connect'}</p>
-		<br/>		
-		<strong>{l s='Comando CRON sincronizzazione veloce. Requisiti minimi consigliati non soddisfatti' mod='importerone6connect'}</strong>
-		<div class="" style="border: none;border-left: 3px solid #fcc94f;padding: 10px;position: relative;background-color: #fff3d7;color: #d2a63c;">{$cronCommandFastWarning}</div>
-		<p class="help-block">{l s="Puoi configurare un CRON Fast per l\'esecuzione del comando PHP con i parametri sopra indicati per eseguire l\'aggiornamento automatico del catalogo, verranno aggiornati solamente prezzo e quantità dei prodotti esistenti, i prodotti nuovi verranno scartati." mod='importerone6connect'}</p>
-		<p class="help-block">{l s="Se si desidera procedere ugualmente sarà necessarrio aggiungere '&accettoAvvisoRequisiti=1' alla stringa del cron" mod='importerone6connect'}</p>
-		{else}
 		<br/>		
 		<strong>{l s='Comando CRON sincronizzazione normale' mod='importerone6connect'}</strong>
 		<div class="" style="border: none;border-left: 3px solid #fcc94f;padding: 10px;position: relative;background-color: #fff3d7;color: #d2a63c;">{$cronCommand}</div>
@@ -195,7 +166,6 @@ $(document).ready(function () {
 		<strong>{l s='Comando CRON sincronizzazione veloce' mod='importerone6connect'}</strong>
 		<div class="" style="border: none;border-left: 3px solid #fcc94f;padding: 10px;position: relative;background-color: #fff3d7;color: #d2a63c;">{$cronCommandFast}</div>
 		<p class="help-block">{l s='Puoi configurare un CRON Fast per l\'esecuzione del comando PHP con i parametri sopra indicati per eseguire l\'aggiornamento automatico del catalogo, verranno aggiornati solamente prezzo e quantità dei prodotti esistenti, i prodotti nuovi verranno scartati' mod='importerone6connect'}</p>
-	{/if}
 	</div>
 </div>
 

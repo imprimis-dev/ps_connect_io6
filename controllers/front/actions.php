@@ -50,7 +50,6 @@ class Ps_Connect_Io6ActionsModuleFrontController extends ModuleFrontController
     public function processExecuteSync()
     {
         try {
-            if($this->module->checkServerRequirementsCron() || Tools::getValue('accettoAvvisoRequisiti',0))
                 $this->module->io6Sync();
         } catch (Exception $e) {
         }
