@@ -44,7 +44,7 @@ define('IO6_PHP_MAX', '7.4.32');
 define('IO6_MAX_EXECUTION_TIME', 300);
 define('IO6_MEMORY_LIMIT', 512);
 define('IO6_PS_VERSION_MIN', '1.7.5.0');
-define('IO6_PS_VERSION_MAX', '1.7.8.6');
+define('IO6_PS_VERSION_MAX', '1.7.8.7');
 
 
 require_once('core/src/classes/IO6ConnectEngine.class.php');
@@ -98,7 +98,7 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
 
         $this->confirmUninstall = $this->l('');
 
-        $this->ps_versions_compliancy = array('min' => '1.7.5.0', 'max' => '1.7.8.6'); //_PS_VERSION_
+        $this->ps_versions_compliancy = array('min' => '1.7.5.0', 'max' => '1.7.8.7'); //_PS_VERSION_
 
         if (!file_exists(IO6_LOG_DIRPATH))
             mkdir(IO6_LOG_DIRPATH, 0775, true);
