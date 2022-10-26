@@ -1479,7 +1479,7 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
                 ),
                 'buttons' => array(
                     [
-                        'href' => $this->context->link->getBaseLink() . "module/ps_connect_io6/actions?action=IO6TestAPI",          // If this is set, the button will be an <a> tag
+                        'href' => $this->context->link->getModuleLink($this->name, 'actions', ['action' => 'IO6TestAPI']),          // If this is set, the button will be an <a> tag
                         'type' => 'button',         // Button type
                         'id'   => 'io6-test-api',
                         'name' => 'io6-test-api',       // If not defined, this will take the value of "submitOptions{$table}"
