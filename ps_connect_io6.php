@@ -2287,7 +2287,7 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
     public function hookBackOfficeHeader()
     {
         if (Tools::getValue('configure') == $this->name) {
-            $this->context->controller->addJS($this->_path . 'views/js/back.js');
+            $this->context->controller->addJS($this->_path . 'views/js/ps_connect_io6.js');
             $this->context->controller->addCSS($this->_path . 'views/css/back.css');
             // $this->context->controller->registerStylesheet(
             //     $this->name,
