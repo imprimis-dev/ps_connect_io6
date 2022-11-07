@@ -43,19 +43,14 @@ $(document).ready(function () {
 				
 				success: function (data) {
 
-					if(data.response.catalogs.passed && (data.response.products.passed && data.response.products.total > 0)) {
-						$('#fieldset_0 .form-wrapper').append('<div class="module_confirmation conf confirm alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button>'+ data.response.catalogs.message + '</div>');
-					}
-					else if(data.response.catalogs.passed && (data.response.products.passed && data.response.products.total <= 0)) {
-						$('#fieldset_0 .form-wrapper').append('<div class="module_error alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button>'+ data.response.catalogs.message + '</div>');
-						$('#fieldset_0 .form-wrapper').append('<div class="module_error alert alert-warning"><button type="button" class="close" data-dismiss="alert">×</button>'+ data.response.products.message + '</div>');
-					}
-					else if(data.response.catalogs.passed && !data.response.products.passed) {
-						$('#fieldset_0 .form-wrapper').append('<div class="module_error alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button>'+ data.response.catalogs.message + '</div>');
-						$('#fieldset_0 .form-wrapper').append('<div class="module_error alert alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>'+ data.response.products.message + '</div>');
+					if(data.response.catalogs.passed && data.response.products.passed) {
+						$('#api-settings_form .form-wrapper').append('<div class="module_confirmation conf confirm alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button>'+ data.response.catalogs.message + '</div>');
+						if(data.response.catalogs.warning){
+							$('#api-settings_form .form-wrapper').append('<div class="module_confirmation conf confirm alert alert-warning"><button type="button" class="close" data-dismiss="alert">×</button>'+ data.response.catalogs.warning + '</div>');
+						}
 					}
 					else {
-						$('#fieldset_0 .form-wrapper').append('<div class="module_error alert alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>'+ data.response.catalogs.message + '</div>');
+						$('#api-settings_form .form-wrapper').append('<div class="module_error alert alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>'+ data.response.catalogs.message + '</div>');
 					}
 				},
 				error: function (error) {

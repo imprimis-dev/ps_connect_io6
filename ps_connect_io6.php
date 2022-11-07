@@ -1446,7 +1446,8 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
         $helper = new HelperForm();
 
         $helper->show_toolbar = false;
-        $helper->table = $this->table;
+
+        $helper->table = 'api-settings';
         $helper->module = $this;
         $helper->default_form_language = $this->context->language->id;
         $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);

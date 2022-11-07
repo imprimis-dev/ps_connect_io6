@@ -162,8 +162,8 @@ class IO6ConnectEngine {
 				$results['response']['catalogs']['total'] = count($retValue);
 				$catalogId = $retValue === false ? -1 : (count($retValue) > 0 ? $retValue[0]['id'] : 0);
 
-				$results['response']['catalogs']['message'] = $catalogId == -1 ? 'Errore di connessione con ImporterONE. Controllare i parametri immessi o contattare il supporto tecnico' : ($catalogId == 0 ? 'Connessione ImporterONE avvenuta correttamente, nessun catalogo presente' : 'Connessione ImporterONE avvenuta correttamente.');
-
+				$results['response']['catalogs']['message'] = $catalogId == -1 ? 'Errore di connessione con ImporterONE. Controllare i parametri immessi o contattare il supporto tecnico' : 'Connessione ImporterONE avvenuta correttamente.';
+				$results['response']['catalogs']['warning'] = $catalogId == 0 ? 'Attenzione, nessun catalogo personale impostato' : ''; 
 			} catch(Exception $e){
 				$results['response']['catalogs']['passed'] = false;
 				$results['response']['catalogs']['message'] = 'Errore di connessione con ImporterONE. Controllare i parametri immessi o contattare il supporto tecnico';
@@ -183,16 +183,13 @@ class IO6ConnectEngine {
 	 
 				$retValue = $this->callIO6API(sprintf('catalogs/%s/products/search', $catalogId), 'POST', $parameters, $endPoint, $api_token);
 				 $results['response']['products']['passed'] = $retValue === false ? false : true;
-				 $results['response']['products']['total'] = $retValue['elementsFounds'];
-				 $results['response']['products']['message'] = $retValue === false ? 'Errore di connessione al catalogo ImporterONE.' : ($retValue['elementsFounds'] > 0 ? 'Connessione ImporterONE avvenuta correttamente.' : 'Connessione catalogo ImporterONE avvenuta correttamente. Nessun prodotto presente nel catalogo testato');
-	 
-	 
 	 
 				 } catch(Exception $e){
 					 $results['response']['products']['passed'] = false;
-					 $results['response']['products']['message'] = 'Errore di connessione al catalogo ImporterONE.';
 	 
 				 }
+			} else {
+				$results['response']['products']['passed'] = true;
 			}
 			
 			
