@@ -50,7 +50,6 @@ class Ps_Connect_Io6ActionsModuleFrontController extends ModuleFrontController
     public function processExecuteSync()
     {
         try {
-            if($this->module->checkServerRequirementsCron() || Tools::getValue('accettoAvvisoRequisiti',0))
                 $this->module->io6Sync();
         } catch (Exception $e) {
         }
@@ -67,6 +66,18 @@ class Ps_Connect_Io6ActionsModuleFrontController extends ModuleFrontController
         // $this->ajaxRender(Tools::jsonEncode($response));
 
 
+    }
+
+    public function displayAjaxIO6TestAPI()
+    {
+        $this->processIO6TestAPI();
+    }
+
+    public function processIO6TestAPI(){
+        try {
+                $this->module->io6TestApi();
+        } catch (Exception $e) {
+        }
     }
 
 }

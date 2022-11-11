@@ -38,9 +38,14 @@ define('IO6_LOG_ERROR', 'ERROR');
 define('IO6_LOG_DIRPATH', _PS_UPLOAD_DIR_ . 'io6-logs' . DIRECTORY_SEPARATOR);
 define('IO6_IMAGES_DIRPATH', _PS_UPLOAD_DIR_ . 'io6-images' . DIRECTORY_SEPARATOR);
 
+
+define('IO6_PHP_MIN', '7.4.13');
+define('IO6_PHP_MAX', '7.4.32');
 define('IO6_MAX_EXECUTION_TIME', 300);
 define('IO6_MEMORY_LIMIT', 512);
-define('IO6_PS_VERSION', '1.7.8.6');
+define('IO6_PS_VERSION_MIN', '1.7.5.0');
+define('IO6_PS_VERSION_MAX', '1.7.8.7');
+
 
 require_once('core/src/classes/IO6ConnectEngine.class.php');
 
@@ -93,7 +98,7 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
 
         $this->confirmUninstall = $this->l('');
 
-        $this->ps_versions_compliancy = array('min' => '1.7.5.0', 'max' => '1.7.8.6'); //_PS_VERSION_
+        $this->ps_versions_compliancy = array('min' => '1.7.5.0', 'max' => '1.7.8.7'); //_PS_VERSION_
 
         if (!file_exists(IO6_LOG_DIRPATH))
             mkdir(IO6_LOG_DIRPATH, 0775, true);
@@ -208,7 +213,16 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
         return $configuration;
     }
 
+    public function io6TestApi(){
+        $io6_configuration = new IO6ConnectConfiguration($this->getIO6ConnectConfiguration());
+        $io6Engine = new IO6ConnectEngine($io6_configuration);
 
+        $results = $io6Engine->TestApi();
+
+        echo isset($results) ? json_encode($results) : '{}';
+
+        die();
+    }
 
     /**
      * 
@@ -641,7 +655,7 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
             $update_features = $io6_configuration->manageFeatures;
             $update_features_html = $io6_configuration->manageFeaturesHTML;
             $concat_features_html = $io6_configuration->concatFeaturesHTML; //TODO CT 20211016 Verificare, se non viene usato rimuovere anche da configuration
-            $excludeNoImage = $io6_configuration->excludeNoImage;
+            //$excludeNoImage = $io6_configuration->excludeNoImage;
             $update_tax_rule = $io6_configuration->manageTaxRule;
 
             $manage_facetedsearch_models = Configuration::get('IMPORTERONE6CONNECT_MANAGE_FACETEDSEARCH_MODELS') == 1 && !$fastSync;
@@ -818,14 +832,14 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
 
                 }
 
-                if ($excludeNoImage && count($io6product->images) == 0 && !$has_cms_images && !$fastSync) {
-                    $activeState = false;
-                    $this->io6_write_log("Prodotto escluso perchè senza immagini. IO6 Product Id: " . $io6product->id, IO6_LOG_INFO);
-                    throw new Exception("Prodotto escluso perchè senza immagini");
-                    // array_push($syncResults['products'], $retProduct);
-                    // //TODO CT 20210521 Non va bene fare la continue, andrebbe aggiornata almeno la tabella ps_importerone6connect_products con lo sync_status e sync_message
-                    // continue;
-                }
+                // if ($excludeNoImage && count($io6product->images) == 0 && !$has_cms_images && !$fastSync) {
+                //     $activeState = false;
+                //     $this->io6_write_log("Prodotto escluso perchè senza immagini. IO6 Product Id: " . $io6product->id, IO6_LOG_INFO);
+                //     throw new Exception("Prodotto escluso perchè senza immagini");
+                //     // array_push($syncResults['products'], $retProduct);
+                //     // //TODO CT 20210521 Non va bene fare la continue, andrebbe aggiornata almeno la tabella ps_importerone6connect_products con lo sync_status e sync_message
+                //     // continue;
+                // }
 
                 $ps_product->active = $activeState;
 
@@ -1353,8 +1367,17 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
             'module_dir' => $this->_path,
             'current_domain' => $_SERVER['HTTP_HOST']
         ));
-        $output .= $this->context->smarty->fetch($this->local_path . 'views/templates/admin/configure.tpl');
 
+        $server_requirements = $this->checkServerRequirements();
+
+        if(!$server_requirements['passed']){
+            $server_info_output = $this->renderFormServerInfo($server_requirements);
+            
+            $output .= $this->displayError($server_info_output);
+        }
+
+        $output .= $this->context->smarty->fetch($this->local_path . 'views/templates/admin/configure.tpl');
+        
         $output .= $this->renderFormApiSettings();
 
         if ($checkApiSettings) {
@@ -1400,6 +1423,7 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
                 array('id' => '2', 'name' => 'Listino 2'),
                 array('id' => '3', 'name' => 'Listino 3')
             );*/
+
             $output .= $this->renderFormGeneralSettings($io6Catalogs, $io6Pricelists);
 
             if (!empty(Configuration::get('IMPORTERONE6CONNECT_CATALOG')) && count($io6CatalogsMatchingSelected) > 0 && count($io6PricelistsMatchingSelected) > 0) {
@@ -1407,8 +1431,6 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
                 $output .= $this->renderFormProductsSettings();
 
                 $output .= $this->renderFormImportSettings();
-
-                $output .= $this->renderFormServerInfo();
 
                 $output .= $this->renderFormExecute();
             }
@@ -1424,7 +1446,8 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
         $helper = new HelperForm();
 
         $helper->show_toolbar = false;
-        $helper->table = $this->table;
+
+        $helper->table = 'api-settings';
         $helper->module = $this;
         $helper->default_form_language = $this->context->language->id;
         $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
@@ -1455,6 +1478,15 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
                     'title' => $this->l('API Settings'),
                     'icon' => 'icon-cogs',
                 ),
+                'buttons' => array(
+                    [
+                        'href' => $this->context->link->getModuleLink($this->name, 'actions', ['action' => 'IO6TestAPI']),          // If this is set, the button will be an <a> tag
+                        'type' => 'button',         // Button type
+                        'id'   => 'io6-test-api',
+                        'name' => 'io6-test-api',       // If not defined, this will take the value of "submitOptions{$table}"
+                        'title' => 'Test Connessione ImporterONE',      // Button label
+                    ],
+                ),
                 'input' => array(
                     array(
                         'col' => 3,
@@ -1473,6 +1505,7 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
                         'label' => $this->l('API Token'),
                     ),
                 ),
+                
                 'submit' => array(
                     'title' => $this->l('Save'),
                 ),
@@ -2060,10 +2093,10 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
                     ),
                     array(
                         'type' => 'switch',
-                        'label' => $this->l('Disattiva prodotti senza immagini'),
+                        'label' => $this->l('Escludi prodotti senza immagini'),
                         'name' => 'IMPORTERONE6CONNECT_EXCLUDE_NOIMAGE',
                         'is_bool' => true,
-                        'desc' => $this->l('Disattiva i prodotti senza immagini.'),
+                        'desc' => $this->l('ImporterONE non invierà prodotti senza immagini e quelli corrispondenti verranno disattivati.'),
                         'values' => array(
                             array(
                                 'id' => 'exclude_noimage_on',
@@ -2160,68 +2193,51 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
 
     /* <-- Form di Import Settings Fine  */
 
-
-    public function checkServerRequirementsCron()
-    {
-        $server_requirements = $this->checkServerRequirements();
-
-        foreach ($server_requirements as $requirement) {
-            if(!$requirement)
-                return false;
-        }
-
-        return true;
-    }
-
     public function checkServerRequirements()
     {
-        $server_requirements = [];
-        $php_requirements = [
-            'max_execution_time'    => IO6_MAX_EXECUTION_TIME,
-            'memory_limit'          => IO6_MEMORY_LIMIT,
-            'ps_version'            => IO6_PS_VERSION,
-        ];
+        $server_checking = [];
+		$server_checking['max_execution_time'] = array(
+			'required' => IO6_MAX_EXECUTION_TIME, 
+			'current' => intval(ini_get('max_execution_time')), 
+			'passed' => (intval(ini_get('max_execution_time')) >= IO6_MAX_EXECUTION_TIME)
+		);
 
-        $server_requirements['php_requirements'] = $php_requirements;
-        $server_requirements['max_execution_time'] = true;
-        $server_requirements['memory_limit'] = true;
-        $server_requirements['ps_version'] = true;
-
-        $php_configurations['max_execution_time'] = ini_get('max_execution_time');
-        $php_configurations['memory_limit'] = ini_get('memory_limit');
-
-
-        if (!(($php_configurations['max_execution_time']) >= $php_requirements['max_execution_time'])) {
-            $server_requirements['max_execution_time'] = false;
-        }
-
-        if (!(intval(substr($php_configurations['memory_limit'], 0, -1)) >= $php_requirements['memory_limit'])) {
-            $server_requirements['memory_limit'] = false;
-        }
-
-        if (_PS_VERSION_ != $php_requirements['ps_version']) {
-            $server_requirements['ps_version'] = false;
-        }
-
-
-        return $server_requirements;
+		$server_checking['memory_limit'] = array(
+			'required' => IO6_MEMORY_LIMIT, 
+			'current' => intval(ini_get('memory_limit')), 
+			'passed' => (intval(ini_get('memory_limit')) >= IO6_MEMORY_LIMIT)
+		);
+		$server_checking['php_version'] = array(
+			'required' => IO6_PHP_MIN . ' - ' . IO6_PHP_MAX, 
+			'current' => phpversion(), 
+			'passed' => (version_compare(phpversion(), IO6_PHP_MIN, '>=') && version_compare(phpversion(), IO6_PHP_MAX, '<='))
+		);
+		$server_checking['ps_version'] = array(
+			'required' => IO6_PS_VERSION_MIN . ' - ' . IO6_PS_VERSION_MAX, 
+			'current' => _PS_VERSION_, 
+			'passed' => (version_compare(_PS_VERSION_, IO6_PS_VERSION_MIN, '>=') && version_compare(_PS_VERSION_, IO6_PS_VERSION_MAX, '<='))
+		);
+		
+        $passed = true;
+		foreach($server_checking as $requirement) {
+			if($requirement['passed'] == false) {
+				$passed = false;
+				break;
+			}
+		}
+		$server_checking['passed'] = $passed;
+		return $server_checking;
     }
+
 
     /**
      * Form Server requirements
      */
-    protected function renderFormServerInfo()
+    protected function renderFormServerInfo($server_requirements)
     {
-        $enable_img = $this->local_path . 'img/admin/enabled.gif';
-        $warning_img = $this->local_path . 'img/admin/warning.gif';
-
-        $server_requirements = $this->checkServerRequirements();
-
         $this->context->smarty->assign(
             array(
-                'serverRequirements'      => $server_requirements,
-                'enable_img'            => $enable_img,
-                'warning_img'           => $warning_img,
+                'serverRequirements' => $server_requirements,
             )
         );
 
@@ -2272,7 +2288,7 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
     public function hookBackOfficeHeader()
     {
         if (Tools::getValue('configure') == $this->name) {
-            $this->context->controller->addJS($this->_path . 'views/js/back.js');
+            $this->context->controller->addJS($this->_path . 'views/js/ps_connect_io6.js');
             $this->context->controller->addCSS($this->_path . 'views/css/back.css');
             // $this->context->controller->registerStylesheet(
             //     $this->name,
