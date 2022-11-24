@@ -24,7 +24,7 @@
 *}
 
 {* <div class="panel"> *}
-    <p>{l s='Requisti minimi non soddisfatti' mod='importerone6connect'}<p>
+    <p>{l s='Requisti minimi non soddisfatti' mod='importerone6connect'}</p>
     <p>{l s='Continuando con l\'esecuzione del plugin o del cron le procedure potrebbero non funzionare correttamente e si accetta di proseguire a proprio rischio.' mod='importerone6connect'}</p>
 
     <table class="server-requirements-table">
