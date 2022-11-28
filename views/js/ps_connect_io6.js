@@ -44,13 +44,13 @@ $(document).ready(function () {
 				success: function (data) {
 
 					if(data.response.catalogs.passed && data.response.products.passed) {
-						$('#api-settings_form .form-wrapper').append('<div class="module_confirmation conf confirm alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button>'+ data.response.catalogs.message + '</div>');
-						if(data.response.catalogs.warning){
-							$('#api-settings_form .form-wrapper').append('<div class="module_confirmation conf confirm alert alert-warning"><button type="button" class="close" data-dismiss="alert">×</button>'+ data.response.catalogs.warning + '</div>');
+						$('#api-settings_form .form-wrapper').append('<div class="module_confirmation conf confirm alert alert-success">'+ data.response.catalogs.message + '</div>');
+						if(data.response.catalogs.warning) {
+							$('#api-settings_form .form-wrapper').append('<div class="module_confirmation conf confirm alert alert-warning">'+ data.response.catalogs.warning + '</div>');
 						}
 					}
 					else {
-						$('#api-settings_form .form-wrapper').append('<div class="module_error alert alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>'+ data.response.catalogs.message + '</div>');
+						$('#api-settings_form .form-wrapper').append('<div class="module_error alert alert-danger">'+ data.response.catalogs.message + '</div>');
 					}
 				},
 				error: function (error) {

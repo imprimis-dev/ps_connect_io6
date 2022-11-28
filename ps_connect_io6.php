@@ -44,7 +44,7 @@ define('IO6_PHP_MAX', '7.4.32');
 define('IO6_MAX_EXECUTION_TIME', 300);
 define('IO6_MEMORY_LIMIT', 512);
 define('IO6_PS_VERSION_MIN', '1.7.5.0');
-define('IO6_PS_VERSION_MAX', '1.7.8.7');
+define('IO6_PS_VERSION_MAX', '1.7.7.7');
 
 
 require_once('core/src/classes/IO6ConnectEngine.class.php');
