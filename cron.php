@@ -10,11 +10,6 @@ if (!Module::isEnabled("ps_connect_io6")) {
     die("Modulo non attivo ps_connect_io6");
 }
 
-$ps_connect_io6 = Module::getInstanceByName("ps_connect_io6");
-if(!$ps_connect_io6->checkServerRequirementsCron() && Tools::getValue('accettoAvvisoRequisiti',0) == 0){
-    die("Errore all'avvio della sincronizzazione. Controlla i requisiti minimi o accetta di proseguire ignorandoli modificando i parametri della chiamata al cron.");
-}
-
 if (Tools::isPHPCLI()) {
     //disabilito eventualmente i notice
     error_reporting(E_ERROR | E_WARNING | E_PARSE);

@@ -113,7 +113,7 @@ class IO6ConnectEngine {
 			$parameters['calculateFoundRows'] = true;
 			$parameters['excludeAvailLessThan'] = $this->configuration->excludeAvailLessThan;
 			$parameters['excludeAvailType'] = $this->configuration->excludeAvailType;
-
+			$parameters['imagesSearch'] = $this->configuration->excludeNoImage ? 1 : 0;
 			$parameters['isActive'] = 1;
 			$parameters['isObsolete'] = 0;
 
@@ -148,6 +148,52 @@ class IO6ConnectEngine {
 			}
 
 			return $priceLists;
+		}
+
+		public function TestAPI() {
+
+			$api_token = $this->configuration->apiToken;			
+			$endPoint = rtrim($this->configuration->apiEndPoint, '/');
+			$catalogId = -1;
+			$results = [];
+			try{
+				$retValue = $this->callIO6API('catalogs', 'GET', null, $endPoint, $api_token);
+				$results['response']['catalogs']['passed'] = $retValue === false ? false : true;
+				$results['response']['catalogs']['total'] = count($retValue);
+				$catalogId = $retValue === false ? -1 : (count($retValue) > 0 ? $retValue[0]['id'] : 0);
+
+				$results['response']['catalogs']['message'] = $catalogId == -1 ? 'Errore di connessione con ImporterONE. Controllare i parametri immessi o contattare il supporto tecnico' : 'Connessione ImporterONE avvenuta correttamente.';
+				$results['response']['catalogs']['warning'] = $catalogId == 0 ? 'Attenzione, nessun catalogo personale impostato' : ''; 
+			} catch(Exception $e){
+				$results['response']['catalogs']['passed'] = false;
+				$results['response']['catalogs']['message'] = 'Errore di connessione con ImporterONE. Controllare i parametri immessi o contattare il supporto tecnico';
+			}
+			
+			if($catalogId > 0){
+				try {
+					$parameters = [];
+				 $parameters['pageSize'] = 5;
+				 $parameters['currentPage'] = 1;
+				 $parameters['imagelimit'] = 1;
+				 $parameters['featuresSearch'] = 0;
+				 $parameters['calculateFoundRows'] = true;			
+				 $parameters['imagesSearch'] = 0;
+				 $parameters['isActive'] = 1;
+				 $parameters['isObsolete'] = 0;
+	 
+				$retValue = $this->callIO6API(sprintf('catalogs/%s/products/search', $catalogId), 'POST', $parameters, $endPoint, $api_token);
+				 $results['response']['products']['passed'] = $retValue === false ? false : true;
+	 
+				 } catch(Exception $e){
+					 $results['response']['products']['passed'] = false;
+	 
+				 }
+			} else {
+				$results['response']['products']['passed'] = true;
+			}
+			
+			
+			return $results;
 		}
 
 	

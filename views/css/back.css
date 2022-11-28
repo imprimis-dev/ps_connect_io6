@@ -56,3 +56,8 @@
 .display-none {
 	display: none!important;
 }
+
+.server-requirements-table th, .server-requirements-table td {
+	padding: 0px 10px;
+	text-align: center;
+}
