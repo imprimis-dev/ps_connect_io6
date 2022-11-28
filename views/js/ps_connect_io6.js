@@ -31,34 +31,31 @@ $(document).ready(function () {
     $("#io6-test-api").unbind();
 	$("#io6-test-api").on('click', async function(e) {
 		e.preventDefault();
-		$cancel = false;
+		var endPoint = $('#IMPORTERONE6CONNECT_API_ENDPOINT').val();
+		var token = $('#IMPORTERONE6CONNECT_API_TOKEN').val();
 		var href = e.target.href;
-		$(this).prop('disabled', true);
 
-			await $.ajax({
-				method: "get",
-				async: true,
-				dataType: 'json',
-				url: href,
-				
-				success: function (data) {
+		if(endPoint == "" || token == "") {
+			alert("Parametri Connessione ImporterONE non impostati.");
+			return;
+		}
 
-					if(data.response.catalogs.passed && data.response.products.passed) {
-						$('#api-settings_form .form-wrapper').append('<div class="module_confirmation conf confirm alert alert-success">'+ data.response.catalogs.message + '</div>');
-						if(data.response.catalogs.warning) {
-							$('#api-settings_form .form-wrapper').append('<div class="module_confirmation conf confirm alert alert-warning">'+ data.response.catalogs.warning + '</div>');
-						}
-					}
-					else {
-						$('#api-settings_form .form-wrapper').append('<div class="module_error alert alert-danger">'+ data.response.catalogs.message + '</div>');
-					}
-				},
-				error: function (error) {
-					console.log("ERROR " + error.toString());		
-				},
-				complete: function() {
-				}
-			});
+		$('#api-settings_form .form-wrapper > .module_confirmation').remove();
+
+		await $.ajax({
+			method: "get",
+			async: true,
+			dataType: 'json',
+			url: href + "&ep=" + endPoint + "&t=" + token,
+			success: function (data) {
+				$('#api-settings_form .form-wrapper').append('<div class="module_confirmation alert alert-' + (data.response.passed ? data.response.iswarning ? 'warning' : 'success' : 'danger') + '"><h4 style="margin-bottom:0;">'+ data.response.message + '</h4></div>');
+			},
+			error: function (error) {
+				console.log("ERROR " + error.toString());		
+			},
+			complete: function() {
+			}
+		});
     });    
 
 });
