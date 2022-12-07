@@ -29,8 +29,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-//test
-
 define('IO6_LOG_INFO', 'INFO');
 define('IO6_LOG_WARNING', 'WARNING');
 define('IO6_LOG_ERROR', 'ERROR');
@@ -40,11 +38,11 @@ define('IO6_IMAGES_DIRPATH', _PS_UPLOAD_DIR_ . 'io6-images' . DIRECTORY_SEPARATO
 
 
 define('IO6_PHP_MIN', '7.4.13');
-define('IO6_PHP_MAX', '7.4.32');
+define('IO6_PHP_MAX', '7.4.33');
 define('IO6_MAX_EXECUTION_TIME', 300);
 define('IO6_MEMORY_LIMIT', 512);
 define('IO6_PS_VERSION_MIN', '1.7.5.0');
-define('IO6_PS_VERSION_MAX', '1.7.7.7');
+define('IO6_PS_VERSION_MAX', '1.7.8.7');
 
 
 require_once('core/src/classes/IO6ConnectEngine.class.php');
@@ -217,10 +215,14 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
         $io6_configuration = new IO6ConnectConfiguration($this->getIO6ConnectConfiguration());
         $io6Engine = new IO6ConnectEngine($io6_configuration);
 
-        $results = $io6Engine->TestApi();
+        try {
+            $results = $io6Engine->TestApi(Tools::getValue('ep', ''), Tools::getValue('t', ''));
+
+        } catch (Exception $ex) {
+            $results = null;
+        }
 
         echo isset($results) ? json_encode($results) : '{}';
-
         die();
     }
 

@@ -150,56 +150,55 @@ class IO6ConnectEngine {
 			return $priceLists;
 		}
 
-		public function TestAPI() {
-
-			$api_token = $this->configuration->apiToken;			
-			$endPoint = rtrim($this->configuration->apiEndPoint, '/');
+		public function TestAPI($endPoint, $api_token) {
+			$results = array();
 			$catalogId = -1;
-			$results = [];
+
+			$test_passed = false;
 			try{
 				$retValue = $this->callIO6API('catalogs', 'GET', null, $endPoint, $api_token);
-				$results['response']['catalogs']['passed'] = $retValue === false ? false : true;
-				$results['response']['catalogs']['total'] = count($retValue);
-				$catalogId = $retValue === false ? -1 : (count($retValue) > 0 ? $retValue[0]['id'] : 0);
-
-				$results['response']['catalogs']['message'] = $catalogId == -1 ? 'Errore di connessione con ImporterONE. Controllare i parametri immessi o contattare il supporto tecnico' : 'Connessione ImporterONE avvenuta correttamente.';
-				$results['response']['catalogs']['warning'] = $catalogId == 0 ? 'Attenzione, nessun catalogo personale impostato' : ''; 
-			} catch(Exception $e){
-				$results['response']['catalogs']['passed'] = false;
-				$results['response']['catalogs']['message'] = 'Errore di connessione con ImporterONE. Controllare i parametri immessi o contattare il supporto tecnico';
-			}
-			
-			if($catalogId > 0){
-				try {
+				$test_passed = $retValue === false ? false : true;
+				$catalogId = $test_passed ? (count($retValue) > 0 ? $retValue[0]['id'] : 0) : $catalogId;
+				
+				if($catalogId > 0){
 					$parameters = [];
-				 $parameters['pageSize'] = 5;
-				 $parameters['currentPage'] = 1;
-				 $parameters['imagelimit'] = 1;
-				 $parameters['featuresSearch'] = 0;
-				 $parameters['calculateFoundRows'] = true;			
-				 $parameters['imagesSearch'] = 0;
-				 $parameters['isActive'] = 1;
-				 $parameters['isObsolete'] = 0;
-	 
-				$retValue = $this->callIO6API(sprintf('catalogs/%s/products/search', $catalogId), 'POST', $parameters, $endPoint, $api_token);
-				 $results['response']['products']['passed'] = $retValue === false ? false : true;
-	 
-				 } catch(Exception $e){
-					 $results['response']['products']['passed'] = false;
-	 
-				 }
-			} else {
-				$results['response']['products']['passed'] = true;
+					$parameters['pageSize'] = 5;
+					$parameters['currentPage'] = 1;
+					$parameters['imagelimit'] = 1;
+					$parameters['featuresSearch'] = 0;
+					$parameters['calculateFoundRows'] = true;			
+					$parameters['imagesSearch'] = 0;
+					$parameters['isActive'] = 1;
+					$parameters['isObsolete'] = 0;
+		
+					$retValue = $this->callIO6API(sprintf('catalogs/%s/products/search', $catalogId), 'POST', $parameters, $endPoint, $api_token);
+
+					$test_passed = $retValue === false ? false : true;
+				}
+			}
+			catch(Exception $ex){
 			}
 			
-			
+			$results['response']['passed'] = $test_passed;
+
+			if($test_passed){
+				$results['response']['message'] = "Connessione ImporterONE avvenuta correttamente.";
+
+				if($catalogId == 0){
+					$results['response']['message'] = "Connessione ImporterONE avvenuta correttamente. Attenzione! Nessun Catalogo Personale impostato";
+					$results['response']['iswarning'] = true;
+				}
+			}
+			else
+				$results['response']['message'] = "Errore di connessione con ImporterONE. Controllare i parametri immessi o contattare il supporto tecnico.";
+
 			return $results;
 		}
 
 	
-		private function callIO6API($action, $method = 'POST', array $parameters = null) {
-			$api_token = $this->configuration->apiToken;			
-			$endPoint = rtrim($this->configuration->apiEndPoint, '/');
+		private function callIO6API($action, $method = 'POST', array $parameters = null, $endPoint = null, $api_token = null) {
+			$api_token = $api_token == null ? $this->configuration->apiToken : $api_token;			
+			$endPoint = $endPoint == null ? rtrim($this->configuration->apiEndPoint, '/') : $endPoint;
 		
 
 			 $requestUrl = "$endPoint/$action";
