@@ -2,7 +2,7 @@
 <module>
 	<name>ps_connect_io6</name>
 	<displayName><![CDATA[ImporterONE Cloud Connector]]></displayName>
-	<version><![CDATA[1.1.0]]></version>
+	<version><![CDATA[1.1.1]]></version>
 	<description><![CDATA[Connette il tuo negozio con ImporterONE Cloud]]></description>
 	<author><![CDATA[Imprimis]]></author>
 	<tab><![CDATA[quick_bulk_update]]></tab>

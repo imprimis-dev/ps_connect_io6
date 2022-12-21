@@ -52,6 +52,9 @@ class Ps_Connect_Io6ActionsModuleFrontController extends ModuleFrontController
         try {
                 $this->module->io6Sync();
         } catch (Exception $e) {
+            //ob_end_clean();
+            header($e->getMessage(),true,500);
+            die($e->getMessage());
         }
 
         // ob_end_clean();
