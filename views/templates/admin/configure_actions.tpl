@@ -72,7 +72,8 @@ $(document).ready(function () {
 					});
 				},
 				error: function (error) {
-					$('#io6-exec-sync-info').html(error.statusText + "<br/>" + error.responseText);							
+					$('#io6-exec-sync-info').html('<div class="module_confirmation alert alert-danger' + '"><h4 style="margin-bottom:0;">'+ error.status + ' ' + error.responseText + '</h4></div>');
+					//$('#io6-exec-sync-info').html(error.statusText + "<br/>" + error.status);							
 				},
 				complete: function() {
 				}

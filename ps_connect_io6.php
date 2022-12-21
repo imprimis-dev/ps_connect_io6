@@ -80,7 +80,7 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
     {
         $this->name = 'ps_connect_io6';
         $this->tab = 'quick_bulk_update';
-        $this->version = '1.1.0';
+        $this->version = '1.1.1';
         $this->author = 'Imprimis';
         $this->need_instance = 0;
 
@@ -251,6 +251,8 @@ class Ps_Connect_Io6 extends Module  implements WidgetInterface
             $this->syncSuppliers($io6Engine);
         }
 
+        
+        
         $results = $this->syncProducts($io6Engine, $io6_configuration, $currentPage, $syncFast, $syncResume);
 
 
